@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <link href="record.css" rel="stylesheet" type="text/css">
+  </link>
+</head>
+
+<body>
+  <header>
+    <h1>Patients Record</h1>
+  </header>
+  <div>
+    <button id="addPatient" onclick="addPatientForm();">Add Patient</button>
+    <button id="updatePatient" onclick="updatePatientForm();">update Patient</button>
+    <button id="deletePatient" onclick="deletePatientForm();">Delete Patient</button>
+  </div>
+  <br>
+  <br>
+  <div>
+    <form action="" method="post" id="recordForm" style="display: none;">
+      <label for="id" id="label_id" style="display: none;">Pateint_ID</label>
+      <input type="number" name="Patient_ID" id='txt_id' placeholder="enter your pateint no" style="display: none;" />
+      <br />
+      <br />
+      <label for="name" id="label_name">Name</label>
+      <input type="text" name="name" id='txt_name' placeholder="enter your name" />
+      <br />
+      <br />
+      <label for="date_of_birth" id="label_DOB">Date_of_birth</label>
+      <input type="date" name="Date_of_birth" id='txt_DOB' placeholder="enter your date_of _birth" />
+      <br />
+      <br />
+      <label for="age" id="label_age">Age</label>
+      <input type="number" name="Age" id='txt_Age' placeholder="enter your age" />
+      <br />
+      <br />
+      <label for="address" id="label_address">Address</label>
+      <input type="text" name="Address" id='txt_Address' placeholder="enter your address" />
+      <br />
+      <br />
+      <label for="city" id="label_city">City</label>
+      <input type="text" name="City" id='txt_City' placeholder="enter your city" />
+      <br />
+      <br />
+      <label for="state" id="label_state">State</label>
+      <input type="text" name="State" id='txt_State' placeholder="enter your state" />
+      <br />
+      <br />
+      <input type="button" id="submit" value="Add_Patient" name="Insert" onclick="insertNewPatient();" />
+      <input type="button" id="update" value="Update_Patient" name="update" onclick="updatePatient();" />
+    </form>
+  </div>
+  <div>
+    <form id="delete_form" style="display: none;">
+      <label for="Patient_ID" id="label_id" ">Pateint_ID</label>
+      <input type=" number" name="Patient_ID" id='txt_id1' placeholder="enter your pateint no" />
+      <input type="button" id="delete" value="Delete_Patient" name="delete" onclick="deletePatient();" />
+
+    </form>
+  </div>
+  <br />
+  <br />
+  <div>
+    <table id='patientTable' border='1'>
+      <thead id="thead">
+        <tr>
+          <th>Patient_ID</th>
+          <th>Name</th>
+          <th>Date of Birth</th>
+          <th>Age</th>
+          <th>Address</th>
+          <th>City</th>
+          <th>State</th>
+        </tr>
+      </thead>
+      <tbody id="tID">
+      </tbody>
+    </table>
+  </div>
+  <div id="pageNavPosition" style="padding-top: 20px" align="center">
+  </div>
+  <script type="text/javascript">
+
+    function addPatientForm() {
+      alert("Enter the details to add new patient");
+      document.getElementById('update').style.display = 'None';
+      document.getElementById('delete').style.display = 'None';
+      document.getElementById('submit').style.display = 'block';
+      document.getElementById('submit').style = 'center';
+      document.getElementById('recordForm').style.display = 'block';
+      document.getElementById('label_id').style.display = 'none';
+      document.getElementById('txt_id').style.display = 'none';
+      document.getElementById('delete_form').style.display = 'none';
+
+    }
+    function updatePatientForm() {
+      alert("Enter the details to update the record");
+      document.getElementById('submit').style.display = 'None';
+      document.getElementById('delete').style.display = 'None';
+      document.getElementById('label_id').style.display = 'inline-block';
+      document.getElementById('txt_id').style.display = 'inline-block';
+      document.getElementById('update').style.display = 'block';
+      document.getElementById('update').style = 'center';
+      document.getElementById('recordForm').style.display = 'block';
+      document.getElementById('delete_form').style.display = 'none';
+    }
+    function deletePatientForm() {
+      alert("Enter the correct Patient_ID to delete the record");
+      document.getElementById('recordForm').style.display = 'none';
+      document.getElementById('delete_form').style.display = 'block';
+      document.getElementById('delete').style.display = 'block';
+      document.getElementById('delete').style = 'center';
+
+    }
+
+    loadPateints();
+   
+    //Load records with GET request
+    function loadPateints() {
+
+      var xhttp = new XMLHttpRequest();
+      
+      // Set GET method and ajax file path with parameter
+      xhttp.open("GET", "Retrieve_Record.php?request=1", true);
+      //console.log("Insert Record");
+      // Content-type
+      xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      // call on request changes state
+      var rows=xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          //  console.log("In callback fun");
+          // Parse this.responseText to JSON object
+          var response = JSON.parse(this.responseText);
+
+          // Select <table id='patientTable'> <tbody>
+          var pateintTable =
+            document.getElementById('patientTable').getElementsByTagName("tbody")[0];
+
+          // Empty the table <tbody>             
+          pateintTable.innerHTML = "";
+          // Loop on response object
+          for (var key in response) {
+            if (response.hasOwnProperty(key)) {
+              var val = response[key];
+
+              // insert new row
+              var NewRow = patientTable.insertRow(1);
+              var id_cell = NewRow.insertCell(0);
+              var name_cell = NewRow.insertCell(1);
+              var DateOfBirth_cell = NewRow.insertCell(2);
+              var Age_cell = NewRow.insertCell(3);
+              var Address_cell = NewRow.insertCell(4);
+              var City_cell = NewRow.insertCell(5);
+              var State_cell = NewRow.insertCell(6);
+
+              id_cell.innerHTML = val['id'];
+              name_cell.innerHTML = val['name'];
+              DateOfBirth_cell.innerHTML = val['DateOfBirth'];
+              Age_cell.innerHTML = val['Age'];
+              Address_cell.innerHTML = val['Address'];
+              City_cell.innerHTML = val['city'];
+              State_cell.innerHTML = val['state'];
+
+            }
+           
+          }
+          
+        }
+      };
+      // Send request
+  
+      xhttp.send();
+     
+    }
+
+    
+
+    // Insert new record with POST request
+    function insertNewPatient() {
+
+
+      var name = document.getElementById('txt_name').value;
+      var DOB = document.getElementById('txt_DOB').value;
+      var Age = document.getElementById('txt_Age').value;
+      var Address = document.getElementById('txt_Address').value;
+      var city = document.getElementById('txt_City').value;
+      var state = document.getElementById('txt_State').value;
+
+      //console.log(name, DOB);
+      document.getElementById("recordForm").style.display = 'none';
+      //recordForm.innerHTML="";
+
+      if (name != '' && DOB != '' && Age != '' && Address != '' && city != '' && state != '') {
+
+        var data = { name: name, DOB: DOB, Age: Age, Address: Address, city: city, state: state };
+        var xhttp = new XMLHttpRequest();
+        // Set POST method and ajax file path
+        xhttp.open("POST", "Insert_Record.php", true);
+
+        // call on request changes state
+        xhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            console.log("In Callback Function of Insert Record");
+            var response = (this.responseText);
+            //console.log(response);
+            if (response == 1) {
+              alert("Insert successfully.");
+              location.reload();
+              //loadPateints();
+            }
+          }
+        };
+
+        // Content-type
+        xhttp.setRequestHeader("Content-Type", "application/json");
+
+        // Send request with data
+        xhttp.send(JSON.stringify(data));
+      }
+
+    }
+
+    // Update Records
+    function updatePatient() {
+      var id = document.getElementById('txt_id').value;
+      var name = document.getElementById('txt_name').value;
+      var DOB = document.getElementById('txt_DOB').value;
+      var Age = document.getElementById('txt_Age').value;
+      var Address = document.getElementById('txt_Address').value;
+      var city = document.getElementById('txt_City').value;
+      var state = document.getElementById('txt_State').value;
+      document.getElementById("recordForm").style.display = 'none';
+      //console.log(city, state);
+
+      if (id != '', name != '' && DOB != '' && Age != '' && Address != '' && city != '' && state != '') {
+
+        var data = { id: id, name: name, DOB: DOB, Age: Age, Address: Address, city: city, state: state };
+        var xhttp = new XMLHttpRequest();
+        // Set POST method and ajax file path
+        xhttp.open("POST", "Update_Record.php?", true);
+        // call on request changes state
+        xhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            console.log("In Callback Function of Update Record");
+            var response = (this.responseText);
+            console.log(response);
+
+            if (response == '1') {
+              alert("Updated successfully.");
+              location.reload();
+              //loadPateints();
+            }
+          }
+        };
+
+        // Content-type
+        xhttp.setRequestHeader("Content-Type", "application/json");
+
+        // Send request with data
+        xhttp.send(JSON.stringify(data));
+      }
+
+    }
+
+    function deletePatient() {
+      var id = document.getElementById('txt_id1').value;
+      document.getElementById("recordForm").style.display = 'none';
+      if (id != '') {
+
+        var data = { id: id };
+        var xhttp = new XMLHttpRequest();
+        // Set POST method and ajax file path
+        xhttp.open("POST", "Delete_Record.php?request=4", true);
+        // call on request changes state
+        xhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            console.log("In Callback Function of Delete Record");
+            var response = (this.responseText);
+            console.log(response);
+
+            if (response == '1') {
+              alert("Deleted successfully.");
+              location.reload();
+              // loadPateints();
+            }
+          }
+        };
+
+        // Content-type
+        xhttp.setRequestHeader("Content-Type", "application/json");
+
+        // Send request with data
+        xhttp.send(JSON.stringify(data));
+      }
+    }
+
+    function Pager(tableName, itemsPerPage) {
+
+      this.tableName = tableName;
+     
+
+      this.itemsPerPage = itemsPerPage;
+    
+      this.currentPage = 1;
+
+      this.pages = 0;
+
+      this.inited = false;
+
+      this.showRecords = function (from, to) {
+
+        var rows = document.getElementById('patientTable').rows;
+        // console.log(rows);
+        // i starts from 1 to skip table header row
+        //console.log(rows.length);
+        for (var i = 1; i < rows.length; i++) {
+             
+          if (i < from || i > to)
+             
+            rows[i].style.display = 'none';
+
+          else
+
+            rows[i].style.display = '';
+
+        }
+
+      }
+
+      this.showPage = function (pageNumber) {
+
+        if (!this.inited) {
+
+          alert("not inited");
+
+          return;
+
+        }
+       
+
+        var oldPageAnchor = document.getElementById('pg'+this.currentPage);
+
+      
+        oldPageAnchor.className = 'pg-normal';
+      
+
+        var newPageAnchor = document.getElementById('pg' + this.currentPage);
+
+        newPageAnchor.className = 'pg-selected';
+
+        var from = (pageNumber - 1) * itemsPerPage + 1;
+     
+
+        var to = from + itemsPerPage - 1;
+
+        this.showRecords(from, to);
+
+      }
+
+      this.prev = function () {
+
+        if (this.currentPage > 1)
+
+          this.showPage(this.currentPage - 1);
+
+      }
+
+      this.next = function () {
+
+        if (this.currentPage < this.pages) {
+
+          this.showPage(this.currentPage + 1);
+
+        }
+
+      }
+
+      this.init = function () {
+       console.log(tableName);
+       var rows = document.getElementById(tableName).rows;
+      // var rowlen= rows.length;
+         var len=rows.length;
+
+        console.log(len);
+        var records = (14 - 1);
+        console.log(records);
+        this.pages = Math.ceil(records / itemsPerPage);
+        console.log(this.pages);
+        this.inited = true;
+
+      }
+
+      this.showPageNav = function (pagerName, positionId) {
+
+        if (!this.inited) {
+
+          alert("not inited");
+          return;
+        }
+         
+        var element = document.getElementById(positionId);
+
+        var pagerHtml = '<span onclick="' + pagerName + '.prev();" class="pg-normal">   Prev </span> ';
+         
+        for (var page = 1; page <= this.pages; page++)
+         
+
+        pagerHtml += '<span id="pg' + page + '" class="pg-normal" onclick="' + pagerName + '.showPage(' + page + ');">' + page + '</span> ';
+        
+        pagerHtml += '<span onclick="' + pagerName + '.next();" class="pg-normal"> Next  </span>';
+       
+        element.innerHTML += pagerHtml;
+        
+      }
+
+    }
+
+    var pager = new Pager('patientTable', 4);
+    pager.init();
+    pager.showPageNav('pager', 'pageNavPosition');
+    pager.showPage(1);
+  </script>
+</body>
+
+</html>
